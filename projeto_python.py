@@ -4,7 +4,7 @@ import PySimpleGUI as sg
 
 
 con = psycopg2.connect(host = 'localhost', database = 'thiago', 
-                       user = 'postgres', password = 'Thor1234')
+                       user = 'postgres', password = 'thor1234')
 
 
 def limpar():
