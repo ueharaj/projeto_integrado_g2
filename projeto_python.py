@@ -1,1 +1,5 @@
-def cadastro
+def cadastro:
+    oi 
+    oi
+    oi
+    
