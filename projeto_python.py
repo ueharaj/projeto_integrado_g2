@@ -28,7 +28,7 @@ def todos():
     resposta = []
     with con:
         with con.cursor() as cursor:
-            cursor.execute("SELECT * FROM clientes;")
+            cursor.execute("SELECT * FROM thiago;")
             resposta = cursor.fetchall()
     lista.clear()
     for i in range(len(resposta)):
@@ -40,13 +40,13 @@ def todos():
 
 # Inicialização BD
 con = psycopg2.connect(host = 'localhost', database = 'thiago', 
-                       user = 'postgres', password = 'Thor1234')
+                       user = 'postgres', password = 'thor1234')
 with con:
     with con.cursor() as cursor:
-        cursor.execute("""CREATE TABLE IF NOT EXISTS clientes (
+        cursor.execute("""CREATE TABLE IF NOT EXISTS thiago (
             cod_cliente INTEGER PRIMARY KEY UNIQUE NOT NULL,
             nome_cliente VARCHAR(20) NOT NULL,
-            sobrenome_cliente VARCHAR(40) NOT NULL;""")
+            sobrenome_cliente VARCHAR(40) NOT NULL)""")
 
 lista=[]
 indice = 0
