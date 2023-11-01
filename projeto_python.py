@@ -3,7 +3,7 @@ import PySimpleGUI as sg
 
 
 
-con = psycopg2.connect(host = 'localhost', database = 'thiago', 
+con = psycopg2.connect(host = 'localhost', database = 'projeto_integrador_g2', 
                        user = 'postgres', password = 'thor1234')
 
 
@@ -28,7 +28,7 @@ def todos():
     resposta = []
     with con:
         with con.cursor() as cursor:
-            cursor.execute("SELECT * FROM thiago;")
+            cursor.execute("SELECT * FROM laranja;")
             resposta = cursor.fetchall()
     lista.clear()
     for i in range(len(resposta)):
@@ -39,30 +39,56 @@ def todos():
     atualiza()
 
 # Inicialização BD
-con = psycopg2.connect(host = 'localhost', database = 'thiago', 
+con = psycopg2.connect(host = 'localhost', database = 'projeto_integrador_g2', 
                        user = 'postgres', password = 'thor1234')
 with con:
     with con.cursor() as cursor:
-        cursor.execute("""CREATE TABLE IF NOT EXISTS thiago (
-            cod_cliente INTEGER PRIMARY KEY UNIQUE NOT NULL,
-            nome_cliente VARCHAR(20) NOT NULL,
-            sobrenome_cliente VARCHAR(40) NOT NULL)""")
+        cursor.execute("""CREATE TABLE IF NOT EXISTS cliente (
+            Cod_cliente INTEGER PRIMARY KEY UNIQUE NOT NULL,
+            Nome_cliente VARCHAR(50) NOT NULL,
+            cpf_cliente NUMERIC(11) NOT NULL,
+            data_nasci_cliente DATE NOT NULL,
+            end_cliente VARCHAR(80),
+            email_cliente VARCHAR(50),
+            telefone_cliente NUMERIC(13),
+            sexo_cliente CHAR(1) CHECK (sexo_cliente IN ('M','F'))
+            """)
 
 lista=[]
 indice = 0
 
 layout = [
     [
-        sg.Text("cod_cliente:", size=(8, 1)),
+        sg.Text("Cod_cliente:", size=(8, 1)),
         sg.InputText(size=(6, 1), key="-cod_cliente-", focus=False)
     ],
     [
-        sg.Text("nome_cliente:", size=(8, 1)),
+        sg.Text("Nome_cliente:", size=(8, 1)),
         sg.InputText(size=(40, 1), key="-nome_cliente-", focus=True)
     ],
     [
-        sg.Text("sobrenome_cliente:", size=(8, 1)),
-        sg.InputText(size=(40, 1), key="-sobrenome_cliente-")
+        sg.Text("cpf_cliente:", size=(8, 1)),
+        sg.InputText(size=(40, 1), key="-cpf_cliente-")
+    ],
+    [
+        sg.Text("data_nasci_cliente:", size=(8, 1)),
+        sg.InputText(size=(40, 1), key="-data_nasci_cliente-")
+    ],
+    [
+        sg.Text("end_cliente:", size=(8, 1)),
+        sg.InputText(size=(40, 1), key="-end_cliente-")
+    [
+        sg.Text("email_cliente:", size=(8, 1)),
+        sg.InputText(size=(40, 1), key="-email_cliente-")
+    ],
+    [
+        sg.Text("telefone_cliente:", size=(8, 1)),
+        sg.InputText(size=(40, 1), key="-telefone_cliente-")
+    ], 
+    [
+        sg.Text("Gênero:", size=(8, 1)),
+        sg.Radio('Masculino', 'GRUPO1', default=False, key="-GENERO-M-"),
+        sg.Radio('Feminino', 'GRUPO1', default=True, key="-GENERO-F-")
     ],
     [
         sg.Button('Limpar', size=(8, 1), key="-LIMPAR-"),
@@ -78,7 +104,7 @@ layout = [
     ]
 ]
 
-window = sg.Window("thiago", layout, use_default_focus=False)
+window = sg.Window("Cadastro", layout, use_default_focus=False)
 
 # Run the Event Loop
 while True:
@@ -91,26 +117,27 @@ while True:
     elif event == "-INSERIR-":
         with con:
             with con.cursor() as cursor:
-                cursor.execute("INSERT INTO clientes (cod_cliente, nome_cliente, sobrenome_cliente) VALUES (%s, %s, %s);",
+                cursor.execute("INSERT INTO cliente (cod_cliente, nome_cliente, sobrenome_cliente) VALUES (%s, %s, %s);",
                     (values['-cod_cliente-'], values['-nome_cliente-'], values['-sobrenome_cliente-']))
         limpar()
     elif event == "-ATUALIZAR-":
         with con:
             with con.cursor() as cursor:
-                cursor.execute("UPDATE clientes SET cod_cliente = %s, nome_cliente = %s, sobrenome_cliente = %s WHERE cod_cliente = %s",
-                    (values['-cod_cliente-'], values['-nome_cliente-'], values['-sobrenome_cliente-']))
-        lista[indice] = [values['-cod_cliente-'], values['-nome_cliente-'], values['-sobrenome_cliente-']]        
+                cursor.execute("UPDATE laranja SET nome_cliente = %s, sobrenome_cliente = %s WHERE cod_cliente = %s",
+                    (values['-nome_cliente-'], values['-sobrenome_cliente-'], values['-cod_cliente-']))
+        lista[indice] = [values['-cod_cliente-'], values['-nome_cliente-'], values['-sobrenome_cliente-']]  
+       
     elif event == "-REMOVER-":
         with con:
             with con.cursor() as cursor:
-                cursor.execute("DELETE FROM clientes WHERE cod_cliente = %s", (values['-cod_cliente-'],))
+                cursor.execute("DELETE FROM laranja WHERE cod_cliente = %s", (values['-cod_cliente-'],))
         lista.pop(indice)
         indice -= 1
         atualiza()
     elif event == "-PROCURAR-":
         with con:
             with con.cursor() as cursor:
-                cursor.execute("SELECT * FROM clientes WHERE nome_cliente LIKE %s;",
+                cursor.execute("SELECT * FROM laranja WHERE nome_cliente LIKE %s;",
                     ('%'+values['-nome_cliente-']+'%',))
                 resposta = cursor.fetchall()
                 lista.clear()
