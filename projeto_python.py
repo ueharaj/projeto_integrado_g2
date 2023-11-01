@@ -10,11 +10,11 @@ con = psycopg2.connect(host = 'localhost', database = 'projeto_integrador_g2',
 def limpar():
     window['-cod_cliente-'].update('')
     window['-nome_cliente-'].update('')
-    window['-sobrenome_cliente-'].update('')
-    window['-sobrenome_cliente-'].update('')
-    window['-sobrenome_cliente-'].update('')
-    window['-sobrenome_cliente-'].update('')
-    window['-sobrenome_cliente-'].update('')
+    window['-cpf_cliente-'].update('')
+    window['-end_cliente-'].update('')
+    window['-data_nasci_cliente-'].update('')
+    window['-email_cliente-'].update('')
+    window['-telefone_cliente-'].update('')
     window['-sexo_cliente-F-'].update(True)
     
     
@@ -29,8 +29,10 @@ def atualiza():
         window['-data_nasci_cliente-'].update( lista[indice][4] )
         window['-email_cliente-'].update( lista[indice][5] )
         window['-telefone_cliente-'].update( lista[indice][6] )
-        if lista[indice][7]: window['-sexo_cliente-M-'].update(True)
-        else: window['-sexo_cliente-F-'].update(True)
+        if lista[indice][7]: 
+            window['-sexo_cliente-M-'].update(True)
+        else: 
+            window['-sexo_cliente-F-'].update(True)
         
 
 def todos():
@@ -44,7 +46,9 @@ def todos():
     lista.clear()
     for i in range(len(resposta)):
         lista.append( list(resposta[i]) )
-
+        lista[i][7] = True if lista[i][7] == 'M' else False
+        listaString += str(i+1) +') ' + resposta[i][1] + '\n'
+        
     sg.popup('Quantidade de registros: ' + str(len(resposta)))
     indice = 0
     atualiza()
@@ -62,7 +66,7 @@ with con:
             end_cliente VARCHAR(80),
             email_cliente VARCHAR(50),
             telefone_cliente NUMERIC(13),
-            sexo_cliente CHAR(1) CHECK (sexo_cliente IN ('M','F')))
+            sexo_cliente CHAR(1) CHECK (sexo_cliente IN ('M','F')));
             """)
 
 lista=[]
@@ -98,9 +102,9 @@ layout = [
         sg.InputText(size=(40, 1), key="-telefone_cliente-")
     ], 
     [
-        sg.Text("Gênero:", size=(8, 1)),
-        sg.Radio('Masculino', 'GRUPO1', default=False, key="-GENERO-M-"),
-        sg.Radio('Feminino', 'GRUPO1', default=True, key="-GENERO-F-")
+        sg.Text("sexo_cliente:", size=(8, 1)),
+        sg.Radio('Masculino', 'GRUPO1', default=False, key="-sexo_cliente-M-"),
+        sg.Radio('Feminino', 'GRUPO1', default=True, key="-sexo_cliente-F-")
     ],
     [
         sg.Button('Limpar', size=(8, 1), key="-LIMPAR-"),
@@ -130,8 +134,8 @@ while True:
     elif event == "-INSERIR-":
         with con:
             with con.cursor() as cursor:
-                cursor.execute("INSERT INTO cliente (cod_cliente, nome_cliente, cpf_cliente, data_nasci_cliente, end_cliente, email_cliente, telefone_cliente, genero) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
-                    (values['-cod_cliente-'], values['-nome_cliente-'], values['-cpf_cliente-'], values['-data_nasci_cliente-'], values['-end_cliente-'], values['-email_cliente-'], values['-telefone_cliente-'], ('M' if values['-sexo_cliente-'] else 'F')))
+                cursor.execute("INSERT INTO cliente (cod_cliente, nome_cliente, cpf_cliente, data_nasci_cliente, end_cliente, email_cliente, telefone_cliente, sexo_cliente) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
+                    (values['-cod_cliente-'], values['-nome_cliente-'], values['-cpf_cliente-'], values['-data_nasci_cliente-'], values['-end_cliente-'], values['-email_cliente-'], values['-telefone_cliente-'], ('M' if values['-sexo_cliente-M-'] else 'F')))
         limpar()
     elif event == "-ATUALIZAR-":
         with con:
