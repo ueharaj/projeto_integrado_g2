@@ -56,6 +56,10 @@ def todos():
 # Inicialização BD
 con = psycopg2.connect(host = 'localhost', database = 'projeto_integrador_g2', 
                        user = 'postgres', password = 'thor1234')
+
+
+
+# tirar isso aqui....
 with con:
     with con.cursor() as cursor:
         cursor.execute("""CREATE TABLE IF NOT EXISTS cliente (
@@ -120,7 +124,7 @@ layout = [
     ]
 ]
 
-    
+
     
 window = sg.Window("Cadastro", layout, use_default_focus=False)
 
@@ -131,7 +135,7 @@ while True:
         break
     elif event == "-LIMPAR-":
         limpar()
-    elif event == "-INSERIR-":
+    elif event == "-INSERIR-":    ### retirar  (cod_cliente, nome_cliente, cpf_cliente, data_nasci_cliente, end_cliente, email_cliente, telefone_cliente, sexo_cliente)
         with con:
             with con.cursor() as cursor:
                 cursor.execute("INSERT INTO cliente (cod_cliente, nome_cliente, cpf_cliente, data_nasci_cliente, end_cliente, email_cliente, telefone_cliente, sexo_cliente) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
