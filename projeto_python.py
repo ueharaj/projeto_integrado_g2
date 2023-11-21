@@ -11,11 +11,15 @@ def limpar():
     window['-cod_cliente-'].update('')
     window['-nome_cliente-'].update('')
     window['-cpf_cliente-'].update('')
-    window['-end_cliente-'].update('')
+    window['-rua_num_cliente-'].update('')
     window['-data_nasci_cliente-'].update('')
     window['-email_cliente-'].update('')
     window['-telefone_cliente-'].update('')
     window['-sexo_cliente-F-'].update(True)
+    window['-cep-'].update('')
+    window['-uf-'].update('')
+    window['-cidade-'].update('')
+    window['-bairro-'].update('')
     
     
 def atualiza():
@@ -25,7 +29,7 @@ def atualiza():
         window['-cod_cliente-'].update( lista[indice][0] )
         window['-nome_cliente-'].update( lista[indice][1] )
         window['-cpf_cliente-'].update( lista[indice][2] )
-        window['-end_cliente-'].update( lista[indice][3] )
+        window['-rua_num_cliente-'].update( lista[indice][3] )
         window['-data_nasci_cliente-'].update( lista[indice][4] )
         window['-email_cliente-'].update( lista[indice][5] )
         window['-telefone_cliente-'].update( lista[indice][6] )
@@ -33,6 +37,10 @@ def atualiza():
             window['-sexo_cliente-M-'].update(True)
         else: 
             window['-sexo_cliente-F-'].update(True)
+        window['-cep-'].update( lista[indice][7] )
+        window['-uf-'].update( lista[indice][8] )
+        window['-cidade-'].update( lista[indice][9] )
+        window['-bairro-'].update( lista[indice][10] )
         
 
 def todos():
@@ -70,7 +78,11 @@ with con:
             end_cliente VARCHAR(80),
             email_cliente VARCHAR(50),
             telefone_cliente NUMERIC(13),
-            sexo_cliente CHAR(1) CHECK (sexo_cliente IN ('M','F')));
+            sexo_cliente CHAR(1) CHECK (sexo_cliente IN ('M','F'))
+            cep	INTEGER,
+	        uf CHAR(2),
+	        cidade VARCHAR(30),
+	        bairro VARCHAR(30));
             """)
 
 lista=[]
@@ -100,15 +112,27 @@ layout = [
     [
         sg.Text("email_cliente:", size=(8, 1)),
         sg.InputText(size=(40, 1), key="-email_cliente-")
-    ],
-    [
-        sg.Text("telefone_cliente:", size=(8, 1)),
-        sg.InputText(size=(40, 1), key="-telefone_cliente-")
     ], 
     [
         sg.Text("sexo_cliente:", size=(8, 1)),
         sg.Radio('Masculino', 'GRUPO1', default=False, key="-sexo_cliente-M-"),
         sg.Radio('Feminino', 'GRUPO1', default=True, key="-sexo_cliente-F-")
+    ],
+    [
+        sg.Text("cep:", size=(8, 1)),
+        sg.InputText(size=(40, 1), key="-cep-")
+    ],
+    [
+        sg.Text("uf:", size=(8, 1)),
+        sg.InputText(size=(40, 1), key="-uf-")
+    ],
+    [
+        sg.Text("cidade:", size=(8, 1)),
+        sg.InputText(size=(40, 1), key="-cidade-")
+    ],
+    [
+        sg.Text("bairro:", size=(8, 1)),
+        sg.InputText(size=(40, 1), key="-bairro-")
     ],
     [
         sg.Button('Limpar', size=(8, 1), key="-LIMPAR-"),
@@ -126,7 +150,7 @@ layout = [
 
 
     
-window = sg.Window("Cadastro", layout, use_default_focus=False)
+window = sg.Window("Cadastlo do cebola", layout, use_default_focus=False)
 
 while True:
     event, values = window.read()
@@ -138,15 +162,20 @@ while True:
     elif event == "-INSERIR-":    ### retirar  (cod_cliente, nome_cliente, cpf_cliente, data_nasci_cliente, end_cliente, email_cliente, telefone_cliente, sexo_cliente)
         with con:
             with con.cursor() as cursor:
-                cursor.execute("INSERT INTO cliente (cod_cliente, nome_cliente, cpf_cliente, data_nasci_cliente, end_cliente, email_cliente, telefone_cliente, sexo_cliente) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
-                    (values['-cod_cliente-'], values['-nome_cliente-'], values['-cpf_cliente-'], values['-data_nasci_cliente-'], values['-end_cliente-'], values['-email_cliente-'], values['-telefone_cliente-'], ('M' if values['-sexo_cliente-M-'] else 'F')))
+                cursor.execute("INSERT INTO cliente (cod_cliente, nome_cliente, cpf_cliente, data_nasci_cliente, end_cliente, email_cliente, telefone_cliente, sexo_cliente, cep, uf, cidade, bairro) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
+                    (values['-cod_cliente-'], values['-nome_cliente-'], values['-cpf_cliente-'], values['-data_nasci_cliente-'], 
+                     values['-rua_num_cliente-'], values['-email_cliente-'], values['-telefone_cliente-'], ('M' if values['-sexo_cliente-M-'] else 'F'), 
+                     values['-cep-'], values['-uf-'], values['-cidade-'], values['-bairro-']))
         limpar()
     elif event == "-ATUALIZAR-":
         with con:
             with con.cursor() as cursor:
-                cursor.execute("UPDATE cliente SET nome_cliente = %s, cpf_cliente = %s, cpf_cliente = %s, cpf_cliente = %s, cpf_cliente = %s, cpf_cliente = %s WHERE cod_cliente = %s",
-                    (values['-nome_cliente-'], values['-cpf_cliente-'], values['-data_nasci_cliente-'], values['-end_cliente-'], values['-email_cliente-'], values['-telefone_cliente-'], values['-genero-'], values['-cod_cliente-']))
-        lista[indice] = [values['-cod_cliente-'], values['-nome_cliente-'], values['-cpf_cliente-'], values['-data_nasci_cliente-'], values['-end_cliente-'], values['-email_cliente-'], values['-telefone_cliente-'], ('M' if values['-sexo_cliente-M-'] else 'F')]  
+                cursor.execute("UPDATE cliente SET nome_cliente = %s, cpf_cliente = %s, cpf_cliente = %s, cpf_cliente = %s, cpf_cliente = %s, cpf_cliente = %s, cep = %s, uf = %s, cidade = %s, bairro = %s WHERE cod_cliente = %s",
+                    (values['-nome_cliente-'], values['-cpf_cliente-'], values['-data_nasci_cliente-'], values['-end_cliente-'], 
+                     values['-email_cliente-'], values['-telefone_cliente-'], values['-genero-'], values['-cod_cliente-']))
+        lista[indice] = [values['-cod_cliente-'], values['-nome_cliente-'], values['-cpf_cliente-'], 
+                         values['-data_nasci_cliente-'], values['-end_cliente-'], values['-email_cliente-'], values['-telefone_cliente-'], 
+                         ('M' if values['-sexo_cliente-M-'] else 'F'), values['-cep-'], values['-uf-'], values['-cidade-'], values['-bairro-']]  
        
     elif event == "-REMOVER-":
         with con:
@@ -158,8 +187,8 @@ while True:
     elif event == "-PROCURAR-":
         with con:
             with con.cursor() as cursor:
-                cursor.execute("SELECT * FROM cliente WHERE cpf_cliente LIKE %s;",
-                    ('%'+values['-cpf_cliente-']+'%',))
+                cursor.execute("SELECT * FROM cliente WHERE nome_cliente LIKE %s;",
+                    ('%'+values['-nome_cliente-']+'%',))
                 resposta = cursor.fetchall()
                 lista.clear()
                 for i in range(len(resposta)):
