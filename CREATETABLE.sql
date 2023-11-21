@@ -226,3 +226,6 @@ select 	i.cod_cliente AS id_cliente,
 		INNER JOIN forma_pagamento fp ON(i.cod_pagamento=fp.cod_pagamento)
 	group by i.cod_cliente, c.nome_cliente, i.cal_data, fp.forma_pagamento
 	order by c.nome_cliente, i.cal_data
+	
+
+	-- oi
